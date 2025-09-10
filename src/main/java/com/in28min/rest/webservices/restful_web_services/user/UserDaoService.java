@@ -20,17 +20,23 @@ public class UserDaoService {
         users.add(new User(usersCount++, "Jack", LocalDate.now().minusYears(22)));
     }
 
-    public List<User> findAll() {
+    public List<User> findAllUsers() {
         return users;
     }
 
-    public User findOne(int id) {
+    public User findUser(int id) {
         return users.get(id);
     }
 
-    public User save(User user) {
+    public User saveUser(User user) {
         user.setId(usersCount++);
         users.add(user);
         return user;
     }
+
+    public void deleteUser(int id) {
+        users.removeIf(predicate -> predicate.getId() == id);
+
+    }
+
 }
