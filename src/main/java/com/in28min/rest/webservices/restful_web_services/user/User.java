@@ -12,10 +12,9 @@ public class User {
     private Integer id;
 
     @Size(min = 2, message = "Name should have at least 2 characters")
-    @NotNull
     private String name;
 
-    @PastOrPresent
+    @Past(message = "Choose date from the past")
     private LocalDate birthDate;
 
     public User(Integer id, String name, LocalDate birthDate) {
