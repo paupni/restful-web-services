@@ -4,11 +4,14 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import java.util.stream.Collectors;
+
 
 import java.net.URI;
 import java.util.List;
 
 @RestController
+@RequestMapping("/users")
 public class UserResource {
 
     private UserDaoService service;
@@ -17,12 +20,19 @@ public class UserResource {
         this.service = service;
     }
 
-    @GetMapping("/users")
-    public List<User> retrieveAllUsers() {
-        return service.findAllUsers();
+    @GetMapping()
+    public List<User> retrieveAllUsers(@RequestParam(required = false) String name) {
+        List<User> users = service.findAllUsers();
+        if (name != null && !name.isEmpty()) {
+            return users.stream()
+                    .filter(user -> user.getName().toLowerCase().contains(name.toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+        return users;
+
     }
 
-    @GetMapping("/users/{id}")
+    @GetMapping("/{id}")
     public User retrieveUser(@PathVariable(name = "id") Integer id) {
         User user = service.findUser(id);
 
@@ -33,7 +43,7 @@ public class UserResource {
         return user;
     }
 
-    @PostMapping("/users")
+    @PostMapping("")
     public ResponseEntity<User> createUser(@RequestBody @Valid User user) {
         User savedUser = service.saveUser(user);
         URI location = ServletUriComponentsBuilder
@@ -44,7 +54,7 @@ public class UserResource {
         return ResponseEntity.created(location).build();
     }
 
-    @DeleteMapping("/users/{id}")
+    @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable(name = "id") Integer id) {
         service.deleteUser(id);
     }
