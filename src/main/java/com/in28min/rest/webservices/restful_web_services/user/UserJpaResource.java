@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
+
 
 @RestController
 @RequestMapping("jpa/users")
@@ -62,5 +64,16 @@ public class UserJpaResource {
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable(name = "id") Integer id) {
         userRepository.deleteById(id);
+    }
+
+
+    @GetMapping("{id}/posts")
+    public List<Post> retrievePostsforUser(@PathVariable(name = "id") Integer id) {
+        Optional<User> user = userRepository.findById(id);
+        if (user.isEmpty()) {
+            throw new UserNotFoundException("id: " + id);
+        }
+        return user.get().getPosts();
+
     }
 }
